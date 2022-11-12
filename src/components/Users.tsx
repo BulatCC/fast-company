@@ -57,9 +57,7 @@ const Users = () => {
                                     <td>{completedMeetings}</td>
                                     <td>{rate}</td>
                                     <td>
-                                        <button className="btn btn-danger" onClick={() => { handleDelete(_id); }}>
-                                            Delete
-                                        </button>
+                                        <button className="btn btn-danger" onClick={() => { handleDelete(_id); }}>Delete</button>
                                     </td>
                                 </tr>
                             );
