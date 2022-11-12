@@ -45,12 +45,10 @@ const Users = () => {
                                 <tr key={_id}>
                                     <th>{name}</th>
                                     <td>
-                                        {qualities.map(
-                                            ({ _id, name, color }) => (
+                                        {qualities.map(({ _id, name, color }) => (
                                                 <span className={`badge me-1 bg-${color}`} key={_id}>
                                                     {name}
-                                                </span>
-                                            )
+                                                </span>)
                                         )}
                                     </td>
                                     <td>{professionName}</td>
