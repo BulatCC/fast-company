@@ -28,39 +28,32 @@ const Users = () => {
                 <table className="table">
                     <thead>
                         <tr>
-                            {tableTitles.map((title, i) =>
+                            {tableTitles.map((title, i) => (
                                 tableTitles.length === i + 1
                                     ?
-                                    <th key={title} colSpan={2}>
-                                        {title}
-                                    </th>
+                                    <th key={title} colSpan={2}>{title}</th>
                                     :
                                     <th key={title}>{title}</th>
-                            )}
+                            ))}
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map(({ _id, name, qualities, profession: { name: professionName }, completedMeetings, rate }) => {
-                            return (
-                                <tr key={_id}>
-                                    <th>{name}</th>
-                                    <td>
-                                        {qualities.map(({ _id, name, color }) => (
-                                                <span className={`badge me-1 bg-${color}`} key={_id}>
-                                                    {name}
-                                                </span>)
-                                        )}
-                                    </td>
-                                    <td>{professionName}</td>
-                                    <td>{completedMeetings}</td>
-                                    <td>{rate}</td>
-                                    <td>
-                                        <button className="btn btn-danger" onClick={() => { handleDelete(_id); }}>Delete</button>
-                                    </td>
-                                </tr>
-                            );
-                        }
-                        )}
+                        {users.map(({ _id, name, qualities, profession: { name: professionName }, completedMeetings, rate }) => (
+                            <tr key={_id}>
+                                <th>{name}</th>
+                                <td>
+                                    {qualities.map(({ _id, name, color }) =>
+                                        <span className={`badge me-1 bg-${color}`} key={_id}>{name}</span>
+                                    )}
+                                </td>
+                                <td>{professionName}</td>
+                                <td>{completedMeetings}</td>
+                                <td>{rate}</td>
+                                <td>
+                                    <button className="btn btn-danger" onClick={() => { handleDelete(_id); }}>Delete</button>
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             )}
