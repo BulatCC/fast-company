@@ -1,1 +1,1 @@
-# https://dz-seven.vercel.app/
+# https://fast-company-chi.vercel.app/
