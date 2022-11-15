@@ -1,50 +1,37 @@
 import { useState } from 'react';
 import { API } from '../api/index';
-import { User } from '../types/user.type';
+import { UserType } from '../types/user.type';
+import { SaerchStatus } from './SaerchStatus';
+import { User } from './User';
 import { formatWord } from '../services/utils';
 
-const Users = () => {
+const Users = (): JSX.Element => {
     const usersData = API.users.fetchAll();
-    const [users, setUsers] = useState<User[]>(usersData);
-    const tableTitles = ['Имя', 'Качества', 'Профессия', 'Встретился, раз', 'Оценка'];
+    const [users, setUsers] = useState<UserType[]>(usersData);
+    const tableTitles = ['Имя', 'Качества', 'Профессия', 'Встретился, раз', 'Оценка', 'Избранное'];
 
     const handleDelete = (id: string) => {
         const filteredUsers = users.filter(({ _id }) => _id !== id);
         setUsers(filteredUsers);
     };
 
-    const renderPhrase = () => {
-        if (users.length) {
-            const formattedWord = formatWord(users.length, 'а');
-            return <span className="badge bg-primary">{users.length} человек{formattedWord} тусанет с тобой сегодня</span>;
-        }
-        return <span className="badge bg-danger">Никто с тобой не тусанет</span>;
-    };
-
     const titles = tableTitles.map((title, i) => (
         <th key={title} colSpan={tableTitles.length === i + 1 ? 2 : 1}>{title}</th>
     ));
 
-    const usersMarkup = users.map(({ _id, name, qualities, profession: { name: professionName }, completedMeetings, rate }) => (
-        <tr key={_id}>
-            <th>{name}</th>
-            <td>
-                {qualities.map(({ _id, name, color }) => (
-                    <span className={`badge me-1 bg-${color}`} key={_id}>{name}</span>
-                ))}
-            </td>
-            <td>{professionName}</td>
-            <td>{completedMeetings}</td>
-            <td>{rate}</td>
-            <td>
-                <button className="btn btn-danger" onClick={() => { handleDelete(_id); }}>Delete</button>
-            </td>
-        </tr>
-    ))
+    const searchTitle = `${users.length} человек${formatWord(users.length, 'а', '')} тусан${formatWord(users.length, 'у', 'е')}т с тобой сегодня`;
+
+    const usersMarkup = users.map((userData) => <User userData={userData} handleDelete={handleDelete} key={userData._id} />)
 
     return (
         <>
-            <h2>{renderPhrase()}</h2>
+            <h2>
+                <SaerchStatus
+                    length={users.length}
+                    text={searchTitle}
+                    errorText={'Никто с тобой не тусанет'}
+                />
+            </h2>
             {users.length > 0 && (
                 <table className="table">
                     <thead>

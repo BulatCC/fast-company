@@ -1,19 +1,19 @@
-type Proffession = {
+type ProffessionType = {
     _id: string;
     name: string;
 };
 
-type Qualities = {
+export type QualitiesType = {
     _id: string;
     name: string;
     color: string;
 };
 
-export type User = {
+export type UserType = {
     _id: string;
     name: string;
-    profession: Proffession;
-    qualities: Qualities[];
+    profession: ProffessionType;
+    qualities: QualitiesType[];
     completedMeetings: number;
     rate: number;
     bookmark: boolean;
