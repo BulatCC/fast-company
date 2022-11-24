@@ -1,19 +1,20 @@
 import { useState } from 'react';
-import { API } from '../api/index';
 import { UserType } from '../types/user.type';
 import { SaerchStatus } from './SaerchStatus';
 import { User } from './User';
-import { formatWord } from '../services/utils';
+import { Pagination } from './Pagination';
+import { formatWord, paginate } from '../services/utils';
+import { PAGE_SIZE, PaginationDirection } from '../Consts';
+import { PaginationDirectionType } from '../types/pagination.type';
 
-const Users = (): JSX.Element => {
-    const usersData = API.users.fetchAll();
-    const [users, setUsers] = useState<UserType[]>(usersData);
+type UsersProps = {
+    users: UserType[];
+    handleDelete: (id: string) => void;
+};
+
+const Users = ({ users, handleDelete }: UsersProps): JSX.Element => {
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const tableTitles = ['Имя', 'Качества', 'Профессия', 'Встретился, раз', 'Оценка', 'Избранное'];
-
-    const handleDelete = (id: string) => {
-        const filteredUsers = users.filter(({ _id }) => _id !== id);
-        setUsers(filteredUsers);
-    };
 
     const titles = tableTitles.map((title, i) => (
         <th key={title} colSpan={tableTitles.length === i + 1 ? 2 : 1}>{title}</th>
@@ -21,7 +22,20 @@ const Users = (): JSX.Element => {
 
     const searchTitle = `${users.length} человек${formatWord(users.length, 'а', '')} тусан${formatWord(users.length, 'у', 'е')}т с тобой сегодня`;
 
-    const usersMarkup = users.map((userData) => <User userData={userData} handleDelete={handleDelete} key={userData._id} />)
+    const handlePageChange = (pageChangeInfo: number | PaginationDirectionType) => {
+        if (pageChangeInfo === PaginationDirection.Previous) {
+            return setCurrentPage(currentPage - 1);
+        }
+
+        if (pageChangeInfo === PaginationDirection.Next) {
+            return setCurrentPage(currentPage + 1);
+        }
+
+        setCurrentPage(+pageChangeInfo);
+    };
+
+    const usersCrop = paginate(users, currentPage, PAGE_SIZE);
+    const usersMarkup = usersCrop.map((userData) => <User userData={userData} handleDelete={handleDelete} key={userData._id} />);
 
     return (
         <>
@@ -40,6 +54,12 @@ const Users = (): JSX.Element => {
                     <tbody>{usersMarkup}</tbody>
                 </table>
             )}
+            <Pagination
+                currentPage={currentPage}
+                pageSize={PAGE_SIZE}
+                itemsCount={users.length}
+                handlePageChange={handlePageChange}
+            />
         </>
     );
 };

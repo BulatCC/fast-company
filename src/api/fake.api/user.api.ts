@@ -149,6 +149,15 @@ const users = [
         rate: 5,
         bookmark: true,
     },
+    {
+        _id: "67rdca3eeb7f6fgee4d47181r",
+        name: "Matros",
+        profession: professions.actor,
+        qualities: [qualities.handsome],
+        completedMeetings: 438,
+        rate: 4.37,
+        bookmark: true,
+    },
 ];
 export function fetchAll() {
     return users;
