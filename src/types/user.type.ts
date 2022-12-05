@@ -1,18 +1,14 @@
-type ProffessionType = {
+interface ProfessionType {
     _id: string;
     name: string;
 };
 
-export type QualitiesType = {
-    _id: string;
-    name: string;
+export interface QualitiesType extends ProfessionType {
     color: string;
 };
 
-export type UserType = {
-    _id: string;
-    name: string;
-    profession: ProffessionType;
+export interface UserType extends ProfessionType {
+    profession: ProfessionType;
     qualities: QualitiesType[];
     completedMeetings: number;
     rate: number;
