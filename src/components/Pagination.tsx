@@ -1,7 +1,7 @@
 import { PaginationDirectionType } from '../types/pagination.type';
 import { PaginationDirection } from '../Consts';
 
-type PaginationProps = {
+interface PaginationProps {
     itemsCount: number;
     pageSize: number;
     currentPage: number;
@@ -12,16 +12,20 @@ const Pagination = ({ itemsCount, pageSize, currentPage, handlePageChange }: Pag
     const pageCount = Math.ceil(itemsCount / pageSize);
     const pages = Array.from(Array(pageCount), (_, i) => i + 1);
 
-    const setPaginationState = (pageNumber: number, cssClass: string) => {
+    if (pageCount < 2) {
+        return <></>;
+    }
+
+    const setPaginationState = (pageNumber: number, cssClass: string): string => {
         return currentPage === pageNumber ? cssClass : '';
     };
 
-    const changeButtonToSpan = (pageNumber: number, paginationValue: number | PaginationDirectionType) => {
+    const changeButtonToSpan = (pageNumber: number, paginationValue: number | PaginationDirectionType): JSX.Element => {
         if (currentPage === pageNumber) {
-            return <span className="page-link user-select-none">{paginationValue}</span>
+            return <span className="page-link user-select-none">{paginationValue}</span>;
         }
-        return <button className="page-link" onClick={() => handlePageChange(paginationValue)}>{paginationValue}</button>
-    }
+        return <button className="page-link" onClick={() => handlePageChange(paginationValue)}>{paginationValue}</button>;
+    };
 
     return (
         <nav>
@@ -41,7 +45,7 @@ const Pagination = ({ itemsCount, pageSize, currentPage, handlePageChange }: Pag
                 </li>
             </ul>
         </nav>
-    )
-}
+    );
+};
 
 export { Pagination };

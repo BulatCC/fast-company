@@ -2,13 +2,14 @@ import { UserType } from '../types/user.type';
 import { Quality } from './Quality';
 import { Bookmark } from './Bookmark';
 
-type UserProps = {
+interface UserProps {
     userData: UserType;
     handleDelete: (id: string) => void;
 };
 
 const User = (
-    { userData:
+    {
+        userData:
         {
             _id,
             name,
@@ -32,6 +33,7 @@ const User = (
                 <button className="btn btn-danger" onClick={() => { handleDelete(_id); }}>Delete</button>
             </td>
         </tr>
-    )
-}
+    );
+};
+
 export { User };
