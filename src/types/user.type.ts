@@ -1,15 +1,15 @@
-interface ProfessionType {
+interface IProfession {
     _id: string;
     name: string;
 };
 
-export interface QualitiesType extends ProfessionType {
+export interface IQuality extends IProfession {
     color: string;
 };
 
-export interface UserType extends ProfessionType {
-    profession: ProfessionType;
-    qualities: QualitiesType[];
+export interface IUser extends IProfession {
+    profession: IProfession;
+    qualities: IQuality[];
     completedMeetings: number;
     rate: number;
     bookmark: boolean;

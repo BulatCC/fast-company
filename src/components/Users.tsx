@@ -1,25 +1,43 @@
 import { useState, useEffect } from 'react';
-import { UserType } from '../types/user.type';
+import { IUser } from '../types/user.type';
+import { ISortParams } from '../types/sort.type';
 import { SaerchStatus } from './SaerchStatus';
-import { User } from './User';
+import { UserTable } from './UserTable';
 import { Pagination } from './Pagination';
 import { GroupList } from './GroupList';
-import { formatWord, paginate } from '../services/utils';
-import { PAGE_SIZE, PaginationDirection } from '../Consts';
-import { PaginationDirectionType } from '../types/pagination.type';
-import { GroupeListArgumentsType } from '../types/groupList.type';
+import { formatWord, paginate, SortType } from '../services/utils';
+import { PAGE_SIZE, PaginationDirection, SortOrder } from '../Consts';
+import { IPaginationDirection } from '../types/pagination.type';
+import { IGroupeListArguments } from '../types/groupList.type';
 import API from '../api/index';
 
-interface UsersProps {
-    users: UserType[];
-    handleDelete: (id: string) => void;
-};
-
-const Users = ({ users, handleDelete }: UsersProps): JSX.Element => {
+const Users = (): JSX.Element => {
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [professions, setProfessions] = useState<GroupeListArgumentsType>([]);
+    const [professions, setProfessions] = useState<IGroupeListArguments>([]);
     const [selectedProf, setSelectedProf] = useState<Record<string, string> | null>(null);
-    const tableTitles = ['Имя', 'Качества', 'Профессия', 'Встретился, раз', 'Оценка', 'Избранное'];
+    const [sortBy, setSortBy] = useState<ISortParams>({ order: SortOrder.Asc, sortValue: 'name' });
+    const [users, setUsers] = useState<IUser[]>([]);
+
+    useEffect(() => {
+        API.users.fetchAll()
+            .then((users) => {
+                setUsers(users as IUser[]);
+            })
+            .catch(error => console.log(error));
+    }, []);
+
+    const handleDelete = (id: string): void => {
+        const filteredUsers = users.filter(({ _id }) => _id !== id);
+        setUsers(filteredUsers);
+    };
+
+    const handleToggleBookMark = (id: string): void => {
+        const updateBoormark = users.map((user) => {
+            return user._id === id ? { ...user, bookmark: !user.bookmark } : user;
+        });
+
+        setUsers(updateBoormark);
+    };
 
     useEffect(() => {
         API.professions.fetchAll()
@@ -31,11 +49,7 @@ const Users = ({ users, handleDelete }: UsersProps): JSX.Element => {
         setCurrentPage(1);
     }, [selectedProf]);
 
-    const titles = tableTitles.map((title, i) => (
-        <th key={title} colSpan={tableTitles.length === i + 1 ? 2 : 1}>{title}</th>
-    ));
-
-    const handlePageChange = (pageChangeInfo: number | PaginationDirectionType): void => {
+    const handlePageChange = (pageChangeInfo: number | IPaginationDirection): void => {
         if (pageChangeInfo === PaginationDirection.Previous) {
             return setCurrentPage(currentPage - 1);
         }
@@ -43,7 +57,6 @@ const Users = ({ users, handleDelete }: UsersProps): JSX.Element => {
         if (pageChangeInfo === PaginationDirection.Next) {
             return setCurrentPage(currentPage + 1);
         }
-
         setCurrentPage(+pageChangeInfo);
     };
 
@@ -57,17 +70,11 @@ const Users = ({ users, handleDelete }: UsersProps): JSX.Element => {
 
     const searchTitle = `${filteredUsers.length} человек${formatWord(users.length, 'а', '')} тусан${formatWord(users.length, 'у', 'е')}т с тобой сегодня`;
 
-    const usersCrop = paginate(filteredUsers, currentPage, PAGE_SIZE);
+    const sortedUsers = [...filteredUsers].sort(SortType(sortBy.order, sortBy.sortValue as keyof IUser));
 
-    const usersMarkup = usersCrop.map((userData) => (
-        <User
-            userData={userData}
-            handleDelete={handleDelete}
-            key={userData._id}
-        />)
-    );
+    const usersCrop = paginate(sortedUsers, currentPage, PAGE_SIZE);
 
-    const claerFilter = (): void => {
+    const clearFilter = (): void => {
         setSelectedProf(null);
     };
 
@@ -79,9 +86,8 @@ const Users = ({ users, handleDelete }: UsersProps): JSX.Element => {
                     onItemSelect={handleSelectProfession}
                     selectedItem={selectedProf}
                 />
-                <button className='btn btn-secondary mt-2' onClick={claerFilter}>Сбросить</button>
+                <button className='btn btn-secondary mt-2' onClick={clearFilter}>Сбросить</button>
             </div>
-
             <div>
                 <h2>
                     <SaerchStatus
@@ -91,12 +97,13 @@ const Users = ({ users, handleDelete }: UsersProps): JSX.Element => {
                     />
                 </h2>
                 {users.length > 0 && (
-                    <table className="table">
-                        <thead>
-                            <tr>{titles}</tr>
-                        </thead>
-                        <tbody>{usersMarkup}</tbody>
-                    </table>
+                    <UserTable
+                        users={usersCrop}
+                        onSort={setSortBy}
+                        currentSort={sortBy}
+                        handleDelete={handleDelete}
+                        handleToggleBookMark={handleToggleBookMark}
+                    />
                 )}
                 <Pagination
                     currentPage={currentPage}
@@ -105,7 +112,6 @@ const Users = ({ users, handleDelete }: UsersProps): JSX.Element => {
                     handlePageChange={handlePageChange}
                 />
             </div>
-
         </div>
     );
 };

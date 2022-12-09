@@ -1,7 +1,7 @@
-import { GroupeListArgumentsType } from '../types/groupList.type';
+import { IGroupeListArguments } from '../types/groupList.type';
 
 interface GroupListProps {
-    items: GroupeListArgumentsType;
+    items: IGroupeListArguments;
     onItemSelect: (value: Record<string, string>) => void;
     selectedItem?: Record<string, string> | null;
     valueProperty?: string;

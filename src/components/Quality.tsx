@@ -1,7 +1,7 @@
-import { QualitiesType } from '../types/user.type';
+import { IQuality } from '../types/user.type';
 
 interface QualityProps {
-    qualityValue: QualitiesType;
+    qualityValue: IQuality;
 }
 
 const Quality = ({ qualityValue: { _id, name, color } }: QualityProps): JSX.Element => {
