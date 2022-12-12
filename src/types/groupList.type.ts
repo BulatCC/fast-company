@@ -1,1 +1,1 @@
-export type GroupeListArgumentsType = Array<Record<string, string>> | { [key: string]: Record<string, string> };
+export type IGroupeListArguments = Array<Record<string, string>> | { [key: string]: Record<string, string> };

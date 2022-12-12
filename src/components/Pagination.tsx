@@ -1,11 +1,11 @@
-import { PaginationDirectionType } from '../types/pagination.type';
+import { IPaginationDirection } from '../types/pagination.type';
 import { PaginationDirection } from '../Consts';
 
 interface PaginationProps {
     itemsCount: number;
     pageSize: number;
     currentPage: number;
-    handlePageChange: (pageChangeInfo: number | PaginationDirectionType) => void;
+    handlePageChange: (pageChangeInfo: number | IPaginationDirection) => void;
 };
 
 const Pagination = ({ itemsCount, pageSize, currentPage, handlePageChange }: PaginationProps): JSX.Element => {
@@ -20,7 +20,7 @@ const Pagination = ({ itemsCount, pageSize, currentPage, handlePageChange }: Pag
         return currentPage === pageNumber ? cssClass : '';
     };
 
-    const changeButtonToSpan = (pageNumber: number, paginationValue: number | PaginationDirectionType): JSX.Element => {
+    const changeButtonToSpan = (pageNumber: number, paginationValue: number | IPaginationDirection): JSX.Element => {
         if (currentPage === pageNumber) {
             return <span className="page-link user-select-none">{paginationValue}</span>;
         }

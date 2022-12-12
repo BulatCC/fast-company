@@ -1,1 +1,1 @@
-export type PaginationDirectionType = 'Previous' | 'Next';
+export type IPaginationDirection = 'Previous' | 'Next';
