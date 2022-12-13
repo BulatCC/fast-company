@@ -15,12 +15,11 @@ const TableHeader = ({ columns, onSort, currentSort: { sortValue, order } }: Tab
                 key={title}
                 onClick={() => {
                     onSort(path);
-                    console.log(columns);
                 }}
                 role={'button'}
             >
                 {title}
-                {sortValue === path ? <IconSort sortOrder={order} /> : ''}
+                {sortValue === path && <IconSort sortOrder={order} />}
             </th>;
         } else {
             return <th key={title}>

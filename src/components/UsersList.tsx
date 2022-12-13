@@ -11,7 +11,7 @@ import { IPaginationDirection } from '../types/pagination.type';
 import { IGroupeListArguments } from '../types/groupList.type';
 import API from '../api/index';
 
-const Users = (): JSX.Element => {
+const UsersList = (): JSX.Element => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [professions, setProfessions] = useState<IGroupeListArguments>([]);
     const [selectedProf, setSelectedProf] = useState<Record<string, string> | null>(null);
@@ -79,7 +79,7 @@ const Users = (): JSX.Element => {
     };
 
     return (
-        <div className='d-flex'>
+        <div className='d-flex ps-3'>
             <div>
                 <GroupList
                     items={professions}
@@ -116,4 +116,4 @@ const Users = (): JSX.Element => {
     );
 };
 
-export { Users };
+export { UsersList };
