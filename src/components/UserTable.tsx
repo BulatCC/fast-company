@@ -6,6 +6,7 @@ import { SortOrder } from '../Consts';
 import { ISortParams } from '../types/sort.type';
 import { Bookmark } from './Bookmark';
 import { QualitiesList } from './QualitiesList';
+import { Link } from 'react-router-dom';
 
 interface UserTableProps {
     users: IUser[];
@@ -25,7 +26,10 @@ const UserTable = ({ currentSort, onSort, users, handleToggleBookMark, handleDel
     };
 
     const columns = {
-        name: { title: 'Имя', path: 'name' },
+        name: {
+            title: 'Имя',
+            component: ({ _id, name }: IUser) => (<Link to={`${_id}`}>{name}</Link>)
+        },
         qualities: {
             title: 'Качества',
             component: ({ qualities }: IUser) => (<QualitiesList qualities={qualities} />)
