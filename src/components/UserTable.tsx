@@ -28,6 +28,7 @@ const UserTable = ({ currentSort, onSort, users, handleToggleBookMark, handleDel
     const columns = {
         name: {
             title: 'Имя',
+            path: 'name',
             component: ({ _id, name }: IUser) => (<Link to={`${_id}`}>{name}</Link>)
         },
         qualities: {
