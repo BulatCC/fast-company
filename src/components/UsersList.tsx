@@ -5,6 +5,7 @@ import { SaerchStatus } from './SaerchStatus';
 import { UserTable } from './UserTable';
 import { Pagination } from './Pagination';
 import { GroupList } from './GroupList';
+import { TextInput } from './TextInput';
 import { formatWord, paginate, SortType } from '../services/utils';
 import { PAGE_SIZE, PaginationDirection, SortOrder } from '../Consts';
 import { IPaginationDirection } from '../types/pagination.type';
@@ -22,6 +23,11 @@ const UsersList = (): JSX.Element => {
         API.users.fetchAll()
             .then((users) => {
                 setUsers(users as IUser[]);
+
+                users.forEach(({name}) => {
+                    console.log(name.includes('Кокс'))
+                });
+
             })
             .catch(error => console.log(error));
     }, []);
@@ -96,6 +102,7 @@ const UsersList = (): JSX.Element => {
                         errorText={'Никто с тобой не тусанет'}
                     />
                 </h2>
+                <TextInput placeholder='Search' />
                 {users.length > 0 && (
                     <UserTable
                         users={usersCrop}
