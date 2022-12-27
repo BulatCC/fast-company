@@ -36,7 +36,7 @@ const UsersList = (): JSX.Element => {
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedProf]);
+    }, [selectedProf, searchValue]);
 
     const filteredUsers = selectedProf
         ? users.filter(({ profession: { name } }) => name === selectedProf.name)
@@ -73,7 +73,6 @@ const UsersList = (): JSX.Element => {
 
     const handleSearch = ({ target }: ChangeEvent<HTMLInputElement>): void => {
         setSearchValue(target.value);
-        setCurrentPage(1);
         clearFilter();
     };
 
