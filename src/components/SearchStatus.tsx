@@ -1,10 +1,10 @@
-interface SaerchStatusProps {
+interface SearchStatusProps {
     length: number;
     text: string;
     errorText: string;
 };
 
-const SaerchStatus = ({ length, text, errorText }: SaerchStatusProps): JSX.Element => {
+const SearchStatus = ({ length, text, errorText }: SearchStatusProps): JSX.Element => {
     const renderPhrase = (): JSX.Element => {
         if (length) {
             return <span className="badge bg-primary">{text}</span>;
@@ -15,4 +15,4 @@ const SaerchStatus = ({ length, text, errorText }: SaerchStatusProps): JSX.Eleme
     return renderPhrase();
 };
 
-export { SaerchStatus };
+export { SearchStatus };

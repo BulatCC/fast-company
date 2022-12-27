@@ -21,7 +21,6 @@ const UserDetails = ({
     };
     return (
         <>
-            <h1>страница юзера</h1>
             <h1> {name}</h1>
             <h2>Профессия: {profession.name}</h2>
             <QualitiesList qualities={qualities} />

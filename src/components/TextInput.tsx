@@ -1,13 +1,15 @@
+import { ChangeEvent } from 'react';
+
 interface TextInputProps {
-    name: string;
-    value: string;
-    type: string;
     placeholder: string;
-    onChange: () => void;
+    name?: string;
+    value?: string;
+    type?: string;
+    onChange?: (evt: ChangeEvent<HTMLInputElement>) => void;
     label?: string;
 }
 
-const TextInput = ({ name, value, placeholder, type, onChange, label }: TextInputProps) => {
+const TextInput = ({ name, value, placeholder, type = 'text', onChange, label }: TextInputProps): JSX.Element => {
     return (
         <div className='input-group'>
             {label && <label htmlFor={name}>{label}</label>}

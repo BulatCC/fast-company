@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { IUser } from '../types/user.type';
 import { ISortParams } from '../types/sort.type';
-import { SaerchStatus } from './SaerchStatus';
+import { SearchStatus } from './SearchStatus';
 import { UserTable } from './UserTable';
 import { Pagination } from './Pagination';
 import { GroupList } from './GroupList';
 import { TextInput } from './TextInput';
-import { formatWord, paginate, SortType } from '../services/utils';
+import { formatWord, paginate, SortType, searchUser } from '../services/utils';
 import { PAGE_SIZE, PaginationDirection, SortOrder } from '../Consts';
 import { IPaginationDirection } from '../types/pagination.type';
 import { IGroupeListArguments } from '../types/groupList.type';
@@ -18,32 +18,15 @@ const UsersList = (): JSX.Element => {
     const [selectedProf, setSelectedProf] = useState<Record<string, string> | null>(null);
     const [sortBy, setSortBy] = useState<ISortParams>({ order: SortOrder.Asc, sortValue: 'name' });
     const [users, setUsers] = useState<IUser[]>([]);
+    const [searchValue, setSearchValue] = useState<string>('');
 
     useEffect(() => {
         API.users.fetchAll()
             .then((users) => {
                 setUsers(users as IUser[]);
-
-                users.forEach(({name}) => {
-                    console.log(name.includes('Кокс'))
-                });
-
             })
             .catch(error => console.log(error));
     }, []);
-
-    const handleDelete = (id: string): void => {
-        const filteredUsers = users.filter(({ _id }) => _id !== id);
-        setUsers(filteredUsers);
-    };
-
-    const handleToggleBookMark = (id: string): void => {
-        const updateBoormark = users.map((user) => {
-            return user._id === id ? { ...user, bookmark: !user.bookmark } : user;
-        });
-
-        setUsers(updateBoormark);
-    };
 
     useEffect(() => {
         API.professions.fetchAll()
@@ -54,6 +37,45 @@ const UsersList = (): JSX.Element => {
     useEffect(() => {
         setCurrentPage(1);
     }, [selectedProf]);
+
+    const filteredUsers = selectedProf
+        ? users.filter(({ profession: { name } }) => name === selectedProf.name)
+        : users;
+
+    const foundUsers = searchValue
+        ? searchUser(filteredUsers, searchValue)
+        : filteredUsers;
+
+    const searchTitle = `${foundUsers.length} человек${formatWord(foundUsers.length, 'а', '')} тусан${formatWord(foundUsers.length, 'у', 'е')}т с тобой сегодня`;
+
+    const sortedUsers = [...foundUsers].sort(SortType(sortBy.order, sortBy.sortValue as keyof IUser));
+
+    const usersCrop = paginate(sortedUsers, currentPage, PAGE_SIZE);
+
+    const updatePagination = (usersData: IUser[]): void => {
+        if (usersData.length % PAGE_SIZE - 1 === 0) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleDelete = (id: string): void => {
+        const filteredUsers = users.filter(({ _id }) => _id !== id);
+        setUsers(filteredUsers);
+        updatePagination(foundUsers);
+    };
+
+    const handleToggleBookMark = (id: string): void => {
+        const updateBoormark = users.map((user) => {
+            return user._id === id ? { ...user, bookmark: !user.bookmark } : user;
+        });
+        setUsers(updateBoormark);
+    };
+
+    const handleSearch = ({ target }: ChangeEvent<HTMLInputElement>): void => {
+        setSearchValue(target.value);
+        setCurrentPage(1);
+        clearFilter();
+    };
 
     const handlePageChange = (pageChangeInfo: number | IPaginationDirection): void => {
         if (pageChangeInfo === PaginationDirection.Previous) {
@@ -68,17 +90,8 @@ const UsersList = (): JSX.Element => {
 
     const handleSelectProfession = (value: Record<string, string>): void => {
         setSelectedProf(value);
+        setSearchValue('');
     };
-
-    const filteredUsers = selectedProf
-        ? users.filter(({ profession: { name } }) => name === selectedProf.name)
-        : users;
-
-    const searchTitle = `${filteredUsers.length} человек${formatWord(users.length, 'а', '')} тусан${formatWord(users.length, 'у', 'е')}т с тобой сегодня`;
-
-    const sortedUsers = [...filteredUsers].sort(SortType(sortBy.order, sortBy.sortValue as keyof IUser));
-
-    const usersCrop = paginate(sortedUsers, currentPage, PAGE_SIZE);
 
     const clearFilter = (): void => {
         setSelectedProf(null);
@@ -96,14 +109,18 @@ const UsersList = (): JSX.Element => {
             </div>
             <div>
                 <h2>
-                    <SaerchStatus
-                        length={users.length}
+                    <SearchStatus
+                        length={foundUsers.length}
                         text={searchTitle}
                         errorText={'Никто с тобой не тусанет'}
                     />
                 </h2>
-                <TextInput placeholder='Search' />
-                {users.length > 0 && (
+                <TextInput
+                    value={searchValue}
+                    onChange={handleSearch}
+                    placeholder='Поиск'
+                />
+                {foundUsers.length > 0 && (
                     <UserTable
                         users={usersCrop}
                         onSort={setSortBy}
@@ -115,7 +132,7 @@ const UsersList = (): JSX.Element => {
                 <Pagination
                     currentPage={currentPage}
                     pageSize={PAGE_SIZE}
-                    itemsCount={filteredUsers.length}
+                    itemsCount={foundUsers.length}
                     handlePageChange={handlePageChange}
                 />
             </div>
