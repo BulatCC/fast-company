@@ -1,4 +1,5 @@
 import { ISort } from '../types/sort.type';
+import { IUser } from '../types/user.type';
 import { SortOrder } from '../Consts';
 
 export const formatWord = (number: number, endPhrasePlural: string, endPhraseSingular: string): string => {
@@ -27,4 +28,10 @@ export const getObjByString = (obj: any, str: string): string => {
         return splittedString.reduce((acc, splitted) => acc[splitted], obj);
     }
     return str;
+};
+
+export const searchUser = (usersData: IUser[], pattern: string): IUser[] => {
+    return usersData.filter(user => {
+        return user.name.toLowerCase().includes(pattern.toLowerCase().trim());
+    });
 };
